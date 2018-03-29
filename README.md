@@ -1,13 +1,15 @@
-# Zoneminder
-All-in-one zoneminder image including zoneminder, web server, database and working api.
-Working, but only for testing. Under development.
+# Docker Zoneminder
+All-in-one Zoneminder image built on Alpine Linux and Php7.
 
-## Issues
-* No timestamp on capture
-* Access denied for user lighttpd to events/images on debian
-* Pid files is created in mysql datadir for some reason
+## Components
+* Alpine Linux
+* Zoneminder
+* MariaDB
+* Lighttpd
+* Php7
 
-## Run from docker hub
+## Run (from docker hub)
+```
 docker run \
 -d \
 --shm-size=4096m \
@@ -17,4 +19,10 @@ docker run \
 -v /path/to/data:/data \
 -v /path/to/images:/images \
 -v /path/to/events:/events \
+-e 'TZ=Europe/Stockholm' \
 rundqvist/zoneminder
+```
+
+## Use
+Login to http://your-ip:8080/zm
+Api located at http://your-ip:8080/zm/api
