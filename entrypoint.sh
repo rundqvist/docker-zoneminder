@@ -5,7 +5,7 @@
 #
 if [ $(find /data -name mysql* | wc -l) -eq 0 ]; then
 
-  echo "[INFO] First run. Installing MySQL."
+  echo "[INFO   ] First run. Installing MySQL."
 
   MYSQL_DATABASE='zm'
   MYSQL_USER='zmuser'
@@ -32,11 +32,43 @@ if [ $(find /data -name mysql* | wc -l) -eq 0 ]; then
   killall mysqld
 
 else
-  echo "[INFO] MySQL already installed."
+  echo "[INFO   ] MySQL already installed."
 fi
 
-echo "[INFO] Current time zone: "${TZ}
+echo "[INFO   ] Current time zone: "${TZ}
 sed -i 's|TIME_ZONE|'${TZ}'|g' /etc/php7/conf.d/50-setting.ini
 
-echo "[INFO] Starting applications"
+if [ -z "$GID" ]; then
+  echo "[WARNING] No GID in ENV. Possible permissions issue when saving events."
+else
+
+  if [ $(getent group $GID) ]; then
+    echo "[INFO   ] Group with gid "$GID" exists"
+  else
+    echo "[INFO   ] Group with gid "$GID" does not exist. Creating placeholder group."
+    groupadd -g $GID primarygroup
+  fi
+
+  echo "[INFO   ] Setting primary group (gid) of user 'lighttpd' to "$GID
+  usermod -g $GID lighttpd
+fi
+
+if [ -z "$UID" ]; then
+  echo "[WARNING] No UID in ENV. Possible permissions issue when saving events."
+else
+  echo "[INFO   ] Setting UID of user 'lighttpd' to "$UID
+  usermod -u $UID lighttpd
+fi
+
+echo "[INFO   ] Updating permissions"
+chown lighttpd:lighttpd \
+    /etc/zm.conf \
+    /var/log/zoneminder/ \
+    /var/lib/zoneminder/temp \
+    /usr/share/webapps/zoneminder/cgi-bin \
+    /var/lib/zoneminder/templogs \
+    /var/log/zonemindererror.log \
+    /var/log/lighttpd
+
+echo "[INFO   ] Starting applications"
 exec supervisord -c /etc/supervisord.conf
