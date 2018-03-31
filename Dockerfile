@@ -18,7 +18,7 @@ RUN apk add --no-cache --virtual .build-deps make gcc musl-dev perl-dev expat-de
     && apk del .build-deps
 
 RUN apk add --no-cache \
-    lighttpd supervisor mysql mysql-client zoneminder
+    shadow lighttpd supervisor mysql mysql-client zoneminder
 
 RUN mkdir -p /home/buildozer/aports/community/zoneminder/src/ \
     && wget https://github.com/FriendsOfCake/crud/archive/c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
@@ -40,19 +40,12 @@ RUN mkdir -p /run/mysqld \
     && mkdir -p /var/lib/zoneminder/templogs \
     && touch /var/log/zonemindererror.log \
     && ln -s /images /var/www/localhost/htdocs/zm/images \
-    && ln -s /events /var/www/localhost/htdocs/zm/events \
-    && chown lighttpd:lighttpd \
-    /etc/zm.conf \
-    /var/log/zoneminder/ \
-    /var/lib/zoneminder/temp \
-    /usr/share/webapps/zoneminder/cgi-bin \
-    /var/lib/zoneminder/templogs \
-    /var/log/zonemindererror.log \
-    /var/www/localhost/htdocs/zm/images \
-    /var/www/localhost/htdocs/zm/events
+    && ln -s /events /var/www/localhost/htdocs/zm/events
 
 RUN sed -i 's/\(ZM_WEB_\(USER\|GROUP\)\)=.*/\1=lighttpd/g' /etc/zm.conf
 
 ENV TZ="Europe/Stockholm"
+ENV UID=""
+ENV GID=""
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
