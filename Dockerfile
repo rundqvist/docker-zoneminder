@@ -6,7 +6,7 @@ WORKDIR /app
 
 RUN apk add --update --no-cache \
     php7 php7-fpm php7-pdo php7-pdo_mysql php7-session php7-sockets php7-ctype php7-cgi php7-soap php7-apcu php7-json \
-    perl-data-uuid perl-data-dump perl-socket perl-io-socket-ssl perl-socket-getaddrinfo perl-protocol-websocket perl-xml-xpath \
+    perl-data-uuid perl-data-dump perl-io-socket-ssl perl-xml-xpath \
     && apk add --no-cache --virtual .build-deps make gcc musl-dev perl-dev expat-dev php7-dev php7-pear \
     && cpan -f install Class::Std::Fast \
     && cpan -f install SOAP::WSDL \
@@ -27,8 +27,9 @@ RUN apk add --update --no-cache \
     && touch /var/log/zonemindererror.log \
     && ln -s /images /var/www/localhost/htdocs/zm/images \
     && ln -s /events /var/www/localhost/htdocs/zm/events \
-    && sed -i 's/\(ZM_WEB_\(USER\|GROUP\)\)=.*/\1=lighttpd/g' /etc/zm.conf
-
+    && sed -i 's/\(ZM_WEB_\(USER\|GROUP\)\)=.*/\1=lighttpd/g' /etc/zm.conf \
+    && rm -rf /root/.cpan
+    
 COPY root /
 
 ENV TZ="Europe/Stockholm" \
