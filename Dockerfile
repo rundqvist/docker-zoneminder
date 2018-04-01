@@ -13,8 +13,7 @@ RUN apk add --update --no-cache \
     && cpan -f install IO::Socket::Multicast \
     && echo "n" | pecl install apcu_bc \
     && apk del .build-deps \
-    && apk add --no-cache \
-    shadow lighttpd supervisor mysql zoneminder \
+    && apk add --no-cache shadow lighttpd supervisor mysql zoneminder \
     && mkdir -p /home/buildozer/aports/community/zoneminder/src/ \
     && wget https://github.com/FriendsOfCake/crud/archive/c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
     && unzip c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
