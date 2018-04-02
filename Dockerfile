@@ -6,14 +6,16 @@ WORKDIR /app
 
 RUN apk add --update --no-cache \
     php7 php7-fpm php7-pdo php7-pdo_mysql php7-session php7-sockets php7-ctype php7-cgi php7-soap php7-apcu php7-json \
-    perl-data-uuid perl-data-dump perl-io-socket-ssl perl-xml-xpath \
-    && apk add --no-cache --virtual .build-deps make gcc musl-dev perl-dev expat-dev php7-dev php7-pear \
+    perl-data-uuid perl-data-dump perl-io-socket-ssl perl-xml-xpath
+
+ RUN apk add --no-cache --virtual .build-deps make gcc musl-dev perl-dev expat-dev php7-dev php7-pear \
     && cpan -f install Class::Std::Fast \
     && cpan -f install SOAP::WSDL \
     && cpan -f install IO::Socket::Multicast \
     && echo "n" | pecl install apcu_bc \
-    && apk del .build-deps \
-    && apk add --no-cache shadow lighttpd supervisor mysql zoneminder \
+    && apk del .build-deps
+
+RUN apk add --no-cache shadow lighttpd supervisor mysql zoneminder \
     && mkdir -p /home/buildozer/aports/community/zoneminder/src/ \
     && wget https://github.com/FriendsOfCake/crud/archive/c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
     && unzip c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
