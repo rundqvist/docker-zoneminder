@@ -35,8 +35,29 @@ else
   echo "[INFO   ] MySQL already installed."
 fi
 
-echo "[INFO   ] Current time zone: "${TZ}
-sed -i 's|TIME_ZONE|'${TZ}'|g' /etc/php7/conf.d/50-setting.ini
+if [ -z "$TZ" ]; then
+
+  echo "[INFO   ] No timezone in ENV. Using system timezone."
+
+  checksum=`md5sum /etc/localtime | cut -d' ' -f1`
+  TZ=`find /usr/share/zoneinfo/ -type f -exec md5sum {} \; | grep "^$checksum" | sed "s/.*\/usr\/share\/zoneinfo\///" | head -n 1`
+
+  if [ -z "$TZ" ]; then
+    echo "[WARNING] Could not resolve timezone. Using Universal time."
+    TZ="Universal"
+    ln -sf /usr/share/zoneinfo/Universal /etc/localtime
+  fi
+
+  echo "[INFO   ] Setting up time zone: "$TZ
+  sed -i 's|TIME_ZONE|'${TZ}'|g' /etc/php7/conf.d/50-setting.ini
+
+else
+
+  echo "[INFO   ] Setting up time zone: "$TZ
+  sed -i 's|TIME_ZONE|'${TZ}'|g' /etc/php7/conf.d/50-setting.ini
+  ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
+
+fi
 
 if [ -z "$GID" ]; then
   echo "[WARNING] No GID in ENV. Possible permissions issue when saving events."
