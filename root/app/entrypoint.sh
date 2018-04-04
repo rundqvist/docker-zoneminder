@@ -5,7 +5,7 @@
 #
 if [ $(find /data -name mysql* | wc -l) -eq 0 ]; then
 
-  echo "[INFO   ] First run. Installing MySQL."
+  echo "[INFO   ] First run, installing MariaDB"
 
   MYSQL_DATABASE='zm'
   MYSQL_USER='zmuser'
@@ -32,20 +32,47 @@ if [ $(find /data -name mysql* | wc -l) -eq 0 ]; then
   killall mysqld
 
 else
-  echo "[INFO   ] MySQL already installed."
+  echo "[INFO   ] MariaDB already installed"
 fi
 
-echo "[INFO   ] Current time zone: "${TZ}
-sed -i 's|TIME_ZONE|'${TZ}'|g' /etc/php7/conf.d/50-setting.ini
+#
+# Setup timezone
+#
+LINKTZ=true
 
+if [ -z "$TZ" ]; then
+  echo "[INFO   ] No timezone in ENV, trying to resolve system timezone"
+
+  checksum=`md5sum /etc/localtime | cut -d' ' -f1`
+  TZ=`find /usr/share/zoneinfo/ -type f -exec md5sum {} \; | grep "^$checksum" | sed "s/.*\/usr\/share\/zoneinfo\///" | head -n 1`
+
+  if [ -z "$TZ" ]; then
+    echo "[WARNING] Could not resolve timezone, using Universal time"
+    TZ="Universal"
+  else
+    LINKTZ=false
+  fi
+
+elif [ ! -f /usr/share/zoneinfo/$TZ ]; then
+  echo "[WARNING] Timezone "$TZ" not valid, using Universal time"
+  TZ="Universal"
+fi
+
+if $LINKTZ; then ln -sf /usr/share/zoneinfo/$TZ /etc/localtime; fi
+sed -i 's|TIME_ZONE|'${TZ}'|g' /etc/php7/conf.d/50-setting.ini
+echo "[INFO   ] Zoneminder configured for timezone: "$TZ
+
+#
+# Setup permissions
+#
 if [ -z "$GID" ]; then
-  echo "[WARNING] No GID in ENV. Possible permissions issue when saving events."
+  echo "[WARNING] No GID in ENV, possible permissions issue when saving events"
 else
 
   if [ $(getent group $GID) ]; then
     echo "[INFO   ] Group with gid "$GID" exists"
   else
-    echo "[INFO   ] Group with gid "$GID" does not exist. Creating placeholder group."
+    echo "[INFO   ] Group with gid "$GID" does not exist, creating placeholder group"
     groupadd -g $GID primarygroup
   fi
 
@@ -54,7 +81,7 @@ else
 fi
 
 if [ -z "$UID" ]; then
-  echo "[WARNING] No UID in ENV. Possible permissions issue when saving events."
+  echo "[WARNING] No UID in ENV, possible permissions issue when saving events"
 else
   echo "[INFO   ] Setting UID of user 'lighttpd' to "$UID
   usermod -u $UID lighttpd
@@ -70,5 +97,8 @@ chown lighttpd:lighttpd \
     /var/log/zonemindererror.log \
     /var/log/lighttpd
 
+#
+# Start applications
+#
 echo "[INFO   ] Starting applications"
 exec supervisord -c /etc/supervisord.conf

@@ -15,7 +15,7 @@ RUN apk add --update --no-cache \
     && echo "n" | pecl install apcu_bc \
     && apk del .build-deps
 
-RUN apk add --no-cache shadow lighttpd supervisor mariadb zoneminder \
+RUN apk add --no-cache tzdata shadow lighttpd supervisor mariadb zoneminder \
     && mkdir -p /home/buildozer/aports/community/zoneminder/src/ \
     && wget https://github.com/FriendsOfCake/crud/archive/c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
     && unzip c3976f1478c681b0bbc132ec3a3e82c3984eeed5.zip \
@@ -33,7 +33,7 @@ RUN apk add --no-cache shadow lighttpd supervisor mariadb zoneminder \
     
 COPY root /
 
-ENV TZ="Europe/Stockholm" \
+ENV TZ="" \
     UID="" \
     GID=""
 
