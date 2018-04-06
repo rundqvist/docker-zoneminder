@@ -96,7 +96,7 @@ chown lighttpd:lighttpd \
     /var/lib/zoneminder/templogs \
     /var/log/zonemindererror.log \
     /var/log/lighttpd
-
+apk -q add --no-cache mariadb-client
 #
 # Start applications
 #
