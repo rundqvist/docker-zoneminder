@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --update --no-cache \
     php7 php7-fpm php7-pdo php7-pdo_mysql php7-session php7-sockets php7-ctype php7-cgi php7-soap php7-apcu php7-json \
     perl-data-uuid perl-data-dump perl-io-socket-ssl perl-xml-xpath \
-    tzdata shadow lighttpd supervisor mariadb mariadb-client zoneminder
+    tzdata shadow lighttpd supervisor mariadb zoneminder
 
  RUN apk add --no-cache --virtual .build-deps make gcc musl-dev perl-dev expat-dev php7-dev php7-pear \
     && cpan -f install Class::Std::Fast \
