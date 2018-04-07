@@ -1,12 +1,12 @@
 # Docker Zoneminder
-Zoneminder image built on Alpine Linux and Php7 aiming for a compact container with low resource usage.<br/>
-Compressed size on dockerhub only 120MB, running size less than 400MB (https://hub.docker.com/r/rundqvist/zoneminder/)
+Zoneminder image built on Alpine Linux and Php7 aiming for a compact container with low resource usage.  
+https://hub.docker.com/r/rundqvist/zoneminder/
 
 ## Features
 * All-in-one. No dependencies on external containers.
 * Optimized for performance
 * Working API
-* Small size
+* Compact (compressed size on dockerhub only 120MB, running size less than 400MB)
 
 ## Components
 * Alpine Linux
