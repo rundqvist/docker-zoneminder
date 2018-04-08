@@ -7,6 +7,7 @@ https://hub.docker.com/r/rundqvist/zoneminder/
 * Optimized for performance
 * Working API
 * Compact (compressed size on dockerhub only 120MB, running size less than 400MB)
+* Docker health check
 
 ## Components
 * Alpine Linux
