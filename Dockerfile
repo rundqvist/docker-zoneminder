@@ -32,6 +32,8 @@ RUN apk add --update --no-cache \
     && sed -i 's/\(ZM_WEB_\(USER\|GROUP\)\)=.*/\1=lighttpd/g' /etc/zm.conf \
     && rm -rf /root/.cpan
     
+RUN touch /var/log/mysql.log
+
 COPY root /
 
 ENV TZ="" \
