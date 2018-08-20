@@ -88,6 +88,7 @@ else
 fi
 
 echo "[INFO   ] Updating permissions"
+mkdir -p /dev/shm/temp
 chown lighttpd:lighttpd \
     /etc/zm.conf \
     /var/log/zoneminder/ \
@@ -95,7 +96,8 @@ chown lighttpd:lighttpd \
     /usr/share/webapps/zoneminder/cgi-bin \
     /var/lib/zoneminder/templogs \
     /var/log/zonemindererror.log \
-    /var/log/lighttpd
+    /var/log/lighttpd \
+    /dev/shm/temp
 
 #
 # Start applications
